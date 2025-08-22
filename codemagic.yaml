@@ -1,48 +1,10 @@
-# A sample Codemagic.yaml for Flutter iOS build and preview
 workflows:
-  ios-preview:
-    name: iOS App Preview
+  flutter-ios-simulator:
+    name: Flutter iOS Simulator
     environment:
-      flutter: 3.27.3 # Specify your Flutter version
-      xcode: 16.2    # Specify your Xcode version
-    
+      flutter: 3.27.3
+      xcode: 16.2
     scripts:
-      - name: Fetch Flutter dependencies
-        script: |
-          flutter pub get
-
-      - name: Install iOS dependencies (CocoaPods)
-        script: |
-          # Navigate to the iOS directory to run pod install
-          cd ios
-          pod install --repo-update
-          cd ..
-
-      - name: Build iOS app for simulator
-        script: |
-          # Builds an unsigned .app binary for the iOS simulator
-          # Using --debug and --simulator is crucial for previewing in Codemagic's simulator
-          flutter build ios --debug --simulator
-
+      - flutter build ios --debug --simulator --flavor staging  # --flavor is optional
     artifacts:
-      # This path is where Codemagic expects to find the .app artifact for simulator preview
       - build/ios/iphonesimulator/Runner.app
-
-    # Optional: Configure automatic trigger on pull requests
-    trigger_events:
-      - pull_request
-
-    # Optional: Post a comment on the pull request with the preview link
-    publishing:
-      scripts:
-        - name: Add app preview to pull request
-          script: |
-            # Requires CODEMAGIC_TOKEN and GITHUB_TOKEN environment variables
-            # CODEMAGIC_TOKEN from Codemagic Personal API Token (Teams > Personal Account > Integrations > Codemagic API)
-            # GITHUB_TOKEN (Fine-grained PAT with 'pull requests' read/write access)
-            # This script will comment on the PR with a link to the app preview.
-            # Refer to 'codemagic_app_preview' package documentation for full usage.
-            # Example using Codemagic API directly:
-            # You might need to use `codemagic_app_preview` Dart package or similar custom script here.
-            # For demonstration, a placeholder for the concept:
-            # echo "App preview available at: $CM_APP_PREVIEW_URL"
